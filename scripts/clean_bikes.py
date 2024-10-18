@@ -1,5 +1,3 @@
-  GNU nano 2.0.9                                                                                                                File: clean_bikes.py                                                                                                                                                                                                                                        
-
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import col
