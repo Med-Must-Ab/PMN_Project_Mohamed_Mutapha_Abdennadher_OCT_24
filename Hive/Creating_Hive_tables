@@ -1,0 +1,103 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS customers_lookup (
+    CustomerKey INT,
+    Prefix STRING, 
+    FirstName STRING, 
+    LastName STRING, 
+    BirthDate STRING, 
+    MaritalStatus STRING, 
+    Gender STRING, 
+    EmailAddress STRING, 
+    AnnualIncome FLOAT, 
+    TotalChildren INT, 
+    EducationLevel STRING, 
+    Occupation STRING, 
+    HomeOwner STRING 
+    ) 
+    STORED AS PARQUET LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/customers_lookup.parquet/';
+
+
+
+
+    use project_db;
+drop table if exists customers_lookup;
+CREATE EXTERNAL TABLE IF NOT EXISTS customers_lookup (
+    CustomerKey STRING,
+    Prefix STRING, 
+    FirstName STRING, 
+    LastName STRING, 
+    BirthDate STRING, 
+    MaritalStatus STRING, 
+    Gender STRING, 
+    EmailAddress STRING, 
+    AnnualIncome STRING, 
+    TotalChildren STRING, 
+    EducationLevel STRING, 
+    Occupation STRING, 
+    HomeOwner STRING 
+    ) 
+    STORED AS PARQUET LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/customers_lookup.parquet/';
+    
+    MSCK REPAIR TABLE project_db.customers_lookup;
+    
+    SELECT * FROM project_db.customers_lookup LIMIT 10;
+    
+use project_db;
+CREATE EXTERNAL TABLE IF NOT EXISTS bikes_lookup (
+    bike_id INT,
+    model STRING,
+    category1 STRING,
+    category2 STRING,
+    frame STRING,
+    price FLOAT
+    )
+    STORED AS PARQUET LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/bikes_lookup.parquet/';
+
+drop table bikeshops_lookup;
+use project_db;
+CREATE EXTERNAL TABLE IF NOT EXISTS bikeshops_lookup (
+    bikeshop_id INT,
+    bikeshop_name STRING,
+    bikeshop_city STRING,
+    bikeshop_state STRING,
+    latitude STRING,
+    longitude STRING
+)
+STORED AS PARQUET
+LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/bikeshops_lookup.parquet/';
+
+use project_db;
+SELECT * FROM project_db.bikeshops_lookup LIMIT 10;
+
+input columns: [price, BikeID, CustomerID, category2, OrderID, OrderDate, LastName, model, frame, EmailAddress, FirstName, quantity, category1];"
+
+
+drop table fact_orders;
+CREATE EXTERNAL TABLE IF NOT EXISTS fact_orders ( 
+    OrderID INT,
+    OrderDate STRING,
+    CustomerID STRING,
+    FirstName STRING,
+    LastName STRING,
+    EmailAddress STRING,
+    BikeID INT,
+    model STRING,
+    category1 STRING,
+    category2 STRING,
+    frame STRING,
+    price INT,
+    quantity INT
+)
+STORED AS PARQUET
+LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/fact_orders.parquet/';
+SELECT * FROM project_db.fact_orders LIMIT 10;
+
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'LOCATION 'hdfs://localhost/user/cloudera/modeled_data/Project/fact_orders.parquet/';
+SELECT * FROM project_db.fact_orders LIMIT 10;
+
+DESCRIBE FORMATTED fact_orders;
+
+SELECT COUNT(*) AS null_count
+FROM fact_orders
+WHERE OrderID IS NULL;

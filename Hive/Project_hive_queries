@@ -1,0 +1,82 @@
+"Basic Query to Check Data"
+SELECT * FROM fact_orders LIMIT 10;
+
+
+
+"Check for NULL values in OrderID"
+SELECT COUNT(*) AS null_order_id_count
+FROM fact_orders
+WHERE OrderID IS NULL;
+
+
+"Total Sales per Bike Model"
+SELECT model, SUM(quantity) AS total_sales
+FROM fact_orders
+GROUP BY model
+ORDER BY total_sales DESC
+LIMIT 10;
+
+
+
+"Total Sales by Customer"
+SELECT FirstName, LastName, SUM(quantity) AS total_purchases
+FROM fact_orders
+GROUP BY FirstName, LastName
+ORDER BY total_purchases DESC
+LIMIT 10;
+
+
+
+"Monthly Sales Trend"
+SELECT cal.year, cal.month, COUNT(fact.OrderID) AS num_orders
+FROM fact_orders fact
+JOIN calendar_lookup cal
+ON fact.OrderDate = cal.date
+GROUP BY cal.year, cal.month
+ORDER BY cal.year, cal.month;
+
+
+"Total Sales by Category and Model"
+SELECT category1, model, SUM(quantity) AS total_sales
+FROM fact_orders
+GROUP BY category1, model
+ORDER BY total_sales DESC
+LIMIT 10;
+
+
+"Highest Priced Bikes Sold"
+SELECT model, price, SUM(quantity) AS total_sold
+FROM fact_orders
+GROUP BY model, price
+ORDER BY price DESC, total_sold DESC
+LIMIT 10;
+
+"Customer Purchase History"
+SELECT FirstName, LastName, model, SUM(quantity) AS total_bikes_purchased
+FROM fact_orders
+GROUP BY FirstName, LastName, model
+ORDER BY total_bikes_purchased DESC
+LIMIT 10;
+
+"Sales by Frame Type"
+SELECT frame, SUM(quantity) AS total_sales
+FROM fact_orders
+GROUP BY frame
+ORDER BY total_sales DESC;
+
+"Top Selling Bike Categories"
+SELECT category1, SUM(quantity) AS total_sales
+FROM fact_orders
+GROUP BY category1
+ORDER BY total_sales DESC
+LIMIT 10;
+
+"Export Query Results to HDFS in CSV Format"
+INSERT OVERWRITE DIRECTORY '/user/cloudera/output/sales_report_csv'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+SELECT model, SUM(quantity) AS total_sales
+FROM fact_orders
+GROUP BY model;
+
+#
